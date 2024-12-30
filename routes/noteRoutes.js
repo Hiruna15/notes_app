@@ -1,57 +1,20 @@
 import express from "express";
 import checkObjectIdValid from "../middlewares/checkObjectIdValid.js";
-import NotesModel from "../models/note.js";
+import {
+  getNotes,
+  addNote,
+  updateNote,
+  deleteNote,
+} from "../controllers/notes.js";
+
 const router = express.Router();
 
-router.get("/:id", checkObjectIdValid, async (req, res) => {
-  const { id: userId } = req.params;
-  const notes = await NotesModel.find({ createdBy: userId }).exec();
-  res.status(200).json({ success: true, data: notes });
-});
+router.get("/:id", checkObjectIdValid, getNotes);
 
-router.post("/", async (req, res) => {
-  const note = req.body;
+router.post("/", addNote);
 
-  if (Object.keys(note).length === 0) {
-    return res
-      .status(400)
-      .json({ success: false, error: "no note has provided" });
-  }
+router.patch("/:id", checkObjectIdValid, updateNote);
 
-  const newNote = await NotesModel.create(note);
-  res.status(200).json({ success: true, data: newNote });
-});
-
-router.patch("/:id", checkObjectIdValid, async (req, res) => {
-  const note = req.body;
-  const { id: noteId } = req.params;
-
-  const updatedNote = await NotesModel.findByIdAndUpdate(noteId, note, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!updatedNote) {
-    return res
-      .status(400)
-      .json({ success: false, error: "no note found with that id" });
-  }
-
-  res.status(200).json({ success: true, data: updatedNote });
-});
-
-router.delete("/:id", checkObjectIdValid, async (req, res) => {
-  const { id: noteId } = req.params;
-
-  const deletedNote = await NotesModel.findByIdAndDelete(noteId);
-
-  if (deletedNote) {
-    return res.status(200).json({ success: true, data: deletedNote });
-  }
-
-  res
-    .status(400)
-    .json({ success: false, error: "no note found with the given id" });
-});
+router.delete("/:id", checkObjectIdValid, deleteNote);
 
 export default router;
