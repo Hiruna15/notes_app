@@ -40,4 +40,18 @@ router.patch("/:id", checkObjectIdValid, async (req, res) => {
   res.status(200).json({ success: true, data: updatedNote });
 });
 
+router.delete("/:id", checkObjectIdValid, async (req, res) => {
+  const { id: noteId } = req.params;
+
+  const deletedNote = await NotesModel.findByIdAndDelete(noteId);
+
+  if (deletedNote) {
+    return res.status(200).json({ success: true, data: deletedNote });
+  }
+
+  res
+    .status(400)
+    .json({ success: false, error: "no note found with the given id" });
+});
+
 export default router;
