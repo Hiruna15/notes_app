@@ -2,9 +2,14 @@ import express from "express";
 import "dotenv/config";
 import connectDB from "./config/connectDB.js";
 
-const app = express();
+import noteRoutes from "./routes/noteRoutes.js";
 
+const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
+app.use("/notes", noteRoutes);
 
 async function main() {
   await connectDB();
