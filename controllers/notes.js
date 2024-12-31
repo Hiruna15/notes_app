@@ -19,22 +19,26 @@ const addNote = async (req, res) => {
   res.status(200).json({ success: true, data: newNote });
 };
 
-const updateNote = async (req, res) => {
+const updateNote = async (req, res, next) => {
   const note = req.body;
   const { id: noteId } = req.params;
 
-  const updatedNote = await NotesModel.findByIdAndUpdate(noteId, note, {
-    new: true,
-    runValidators: true,
-  });
+  try {
+    const updatedNote = await NotesModel.findByIdAndUpdate(noteId, note, {
+      new: true,
+      runValidators: true,
+    });
 
-  if (!updatedNote) {
-    return res
-      .status(400)
-      .json({ success: false, error: "no note found with that id" });
+    if (!updatedNote) {
+      return res
+        .status(400)
+        .json({ success: false, error: "no note found with that id" });
+    }
+
+    res.status(200).json({ success: true, data: updatedNote });
+  } catch (err) {
+    return next(err);
   }
-
-  res.status(200).json({ success: true, data: updatedNote });
 };
 
 const deleteNote = async (req, res) => {
