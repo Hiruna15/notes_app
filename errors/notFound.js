@@ -1,7 +1,8 @@
-class NotFound extends Error {
+import AppError from "./appError.js";
+
+class NotFound extends AppError {
   constructor(message) {
     super(message);
-    this.message = message;
     this.statusCode = 404;
   }
 }

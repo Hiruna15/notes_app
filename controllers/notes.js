@@ -1,22 +1,29 @@
 import NotesModel from "../models/note.js";
+import { BadRequest, NotFound } from "../errors/index.js";
 
-const getNotes = async (req, res) => {
+const getNotes = async (req, res, next) => {
   const { id: userId } = req.params;
-  const notes = await NotesModel.find({ createdBy: userId }).exec();
-  res.status(200).json({ success: true, data: notes });
+  try {
+    const notes = await NotesModel.find({ createdBy: userId }).exec();
+    res.status(200).json({ success: true, data: notes });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const addNote = async (req, res) => {
   const note = req.body;
 
-  if (Object.keys(note).length === 0) {
-    return res
-      .status(400)
-      .json({ success: false, error: "no note has provided" });
+  if (!Object.keys(note).includes(["title", "createdBy"])) {
+    return next(new BadRequest("the body has not been provided"));
   }
 
-  const newNote = await NotesModel.create(note);
-  res.status(200).json({ success: true, data: newNote });
+  try {
+    const newNote = await NotesModel.create(note);
+    res.status(200).json({ success: true, data: newNote });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const updateNote = async (req, res, next) => {
@@ -30,9 +37,7 @@ const updateNote = async (req, res, next) => {
     });
 
     if (!updatedNote) {
-      return res
-        .status(400)
-        .json({ success: false, error: "no note found with that id" });
+      return next(new NotFound("no note found with the given id"));
     }
 
     res.status(200).json({ success: true, data: updatedNote });
@@ -46,13 +51,11 @@ const deleteNote = async (req, res) => {
 
   const deletedNote = await NotesModel.findByIdAndDelete(noteId);
 
-  if (deletedNote) {
-    return res.status(200).json({ success: true, data: deletedNote });
+  if (!deletedNote) {
+    return next(new NotFound("no note found with the given id"));
   }
 
-  res
-    .status(400)
-    .json({ success: false, error: "no note found with the given id" });
+  res.status(200).json({ success: true, data: deletedNote });
 };
 
 export { getNotes, addNote, updateNote, deleteNote };

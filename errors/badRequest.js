@@ -1,7 +1,8 @@
-class BadRequest extends Error {
+import AppError from "./appError.js";
+
+class BadRequest extends AppError {
   constructor(message) {
     super(message);
-    this.message = message;
     this.statusCode = 400;
   }
 }

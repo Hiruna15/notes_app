@@ -1,7 +1,8 @@
-class InternalServerError extends Error {
+import AppError from "./appError.js";
+
+class InternalServerError extends AppError {
   constructor(message) {
     super(message);
-    this.message = message;
     this.statusCode = 500;
   }
 }
