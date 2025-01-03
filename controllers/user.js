@@ -89,6 +89,17 @@ const login = async (req, res, next) => {
   }
 };
 
-const logout = (req, res, next) => {};
+const logout = (req, res, next) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    sameSite: "Strict",
+    secure: true,
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    sameSite: "Strict",
+    secure: true,
+  });
+};
 
 export { register, login, logout };
