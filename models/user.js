@@ -15,14 +15,6 @@ const userSchema = new Schema({
     lowercase: true,
     trim: true,
   },
-  // password: {
-  //   type: String,
-  //   required: [true, "a password must be provided"],
-  //   minLength: [8, "password must have at least 8 characters"],
-  //   maxLength: [25, "password cannot have more than 25 characters"],
-  //   match: [pwdRegex, "weak password"],
-  //   trim: true,
-  // },
   email: {
     type: String,
     required: [true, "email must be provided"],
@@ -43,12 +35,12 @@ const userSchema = new Schema({
 });
 
 userSchema.pre("save", function () {
-  const pwdRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
+  // const pwdRegex =
+  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
 
-  if (!pwdRegex.test(this.hash)) {
-    throw new BadRequest("Inavlid password");
-  }
+  // if (!pwdRegex.test(this.hash)) {
+  //   throw new BadRequest("Inavlid password");
+  // }
 
   const { hash, salt } = hashPassword(this.hash);
   this.hash = hash;

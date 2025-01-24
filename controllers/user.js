@@ -5,7 +5,7 @@ import { BadRequest, InternalServerError, NotFound } from "../errors/index.js";
 const register = async (req, res, next) => {
   const { username, email, password } = req.body;
 
-  if (!body) {
+  if (!req.body) {
     return next(new BadRequest("Body has not been provided"));
   }
 
@@ -45,9 +45,7 @@ const register = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const body = req.body;
-
-  if (!body) {
+  if (!req.body) {
     return next(new BadRequest("Body has not been provided"));
   }
 

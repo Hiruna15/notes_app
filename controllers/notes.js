@@ -4,7 +4,7 @@ import { BadRequest, NotFound } from "../errors/index.js";
 const getNotes = async (req, res, next) => {
   const { id: userId } = req.params;
   try {
-    const notes = await NotesModel.find({ createdBy: userId }).exec();
+    const notes = await NotesModel.find({ createdBy: userId });
     res.status(200).json({ success: true, data: notes });
   } catch (err) {
     next(err);
@@ -13,10 +13,6 @@ const getNotes = async (req, res, next) => {
 
 const addNote = async (req, res) => {
   const note = req.body;
-
-  if (!Object.keys(note).includes(["title", "createdBy"])) {
-    return next(new BadRequest("the body has not been provided"));
-  }
 
   try {
     const newNote = await NotesModel.create(note);
